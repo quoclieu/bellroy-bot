@@ -4,11 +4,11 @@ const EVENT_KEY_LEFT = 37;
 const EVENT_KEY_UP = 38;
 const EVENT_KEY_RIGHT = 39;
 const EVENT_KEY_DOWN = 40;
-const ROBOT_INITIAL_X_POS = 25;
-const ROBOT_INITIAL_Y_POS = 25;
+const ROBOT_INITIAL_X_POS = 55;
+const ROBOT_INITIAL_Y_POS = 55;
 const BORDER_OFFSET = 2;
 
-document.body.style.margin = '20px';
+const container = document.getElementsByClassName('container')[0];
 
 const createGrid = size => {
   const grid = document.createElement('div');
@@ -20,14 +20,16 @@ const createGrid = size => {
     for (let j = 0; j < size; j++) {
       let cell = document.createElement('div');
       cell.className = 'cell';
-      cell.style.border = '1px solid black';
+      cell.style.border = '1px solid #ffffff';
+      cell.style.borderRadius = '5px';
       cell.style.height = CELL_WIDTH + 'px';
       cell.style.width = CELL_WIDTH + 'px';
+      cell.style.backgroundColor = '#c75724';
       row.appendChild(cell);
     }
     grid.appendChild(row);
   }
-  document.body.appendChild(grid);
+  container.appendChild(grid);
 };
 
 createGrid(GRID_SIZE);
@@ -39,49 +41,72 @@ robot.style.width = '40px';
 robot.style.position = 'absolute';
 robot.style.top = ROBOT_INITIAL_X_POS + 'px';
 robot.style.left = ROBOT_INITIAL_Y_POS + 'px';
-document.body.appendChild(robot);
+container.appendChild(robot);
+let currRotation = 0;
 
 document.body.addEventListener('keydown', e => {
-  const currX = parseInt(robot.style.left);
-  const currY = parseInt(robot.style.top);
-  let newTop;
-  let newLeft;
-
   switch (e.keyCode) {
     case EVENT_KEY_LEFT: {
-      newLeft = currX - CELL_WIDTH - BORDER_OFFSET;
-      if (newLeft >= ROBOT_INITIAL_X_POS) {
-        robot.style.transform = 'rotate(270deg)';
-
-        robot.style.left = currX - CELL_WIDTH - BORDER_OFFSET + 'px';
+      currRotation -= 90;
+      if (currRotation < 0) {
+        currRotation = 270;
       }
-      break;
-    }
-    case EVENT_KEY_UP: {
-      newTop = currY - CELL_WIDTH - BORDER_OFFSET;
-      if (newTop >= ROBOT_INITIAL_Y_POS) {
-        robot.style.transform = 'rotate(0deg)';
-        robot.style.top = newTop + 'px';
-      }
+      robot.style.transform = `rotate(${currRotation}deg)`;
       break;
     }
     case EVENT_KEY_RIGHT: {
-      newLeft = currX + CELL_WIDTH + BORDER_OFFSET;
-      if (newLeft <= (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE) {
-        robot.style.transform = 'rotate(90deg)';
-        robot.style.left = newLeft + 'px';
+      currRotation += 90;
+      if (currRotation > 360) {
+        currRotation = 90;
       }
+      robot.style.transform = `rotate(${currRotation}deg)`;
       break;
     }
-    case EVENT_KEY_DOWN: {
-      newTop = currY + CELL_WIDTH + BORDER_OFFSET;
-      if (newTop <= (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE) {
-        robot.style.transform = 'rotate(180deg)';
-        robot.style.top = newTop + 'px';
-      }
+    case EVENT_KEY_UP: {
+      handleMoveDirection(currRotation);
       break;
     }
     default:
       break;
   }
 });
+
+const handleMoveDirection = rotation => {
+  const currX = parseInt(robot.style.left);
+  const currY = parseInt(robot.style.top);
+  let newTop;
+  let newLeft;
+  switch (rotation) {
+    case 0:
+    case 360: {
+      newTop = currY - CELL_WIDTH - BORDER_OFFSET;
+      if (newTop >= ROBOT_INITIAL_Y_POS) {
+        robot.style.top = newTop + 'px';
+      }
+      break;
+    }
+    case 90: {
+      newLeft = currX + CELL_WIDTH + BORDER_OFFSET;
+      if (newLeft <= (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE) {
+        robot.style.left = newLeft + 'px';
+      }
+      break;
+    }
+    case 180: {
+      newTop = currY + CELL_WIDTH + BORDER_OFFSET;
+      if (newTop <= (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE) {
+        robot.style.top = newTop + 'px';
+      }
+      break;
+    }
+    case 270: {
+      newLeft = currX - CELL_WIDTH - BORDER_OFFSET;
+      if (newLeft >= ROBOT_INITIAL_X_POS) {
+        robot.style.left = newLeft + 'px';
+      }
+      break;
+    }
+    default:
+      break;
+  }
+};
