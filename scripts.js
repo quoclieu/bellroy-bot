@@ -87,14 +87,20 @@ const handleMoveDirection = rotation => {
     }
     case 90: {
       newLeft = currX + CELL_WIDTH + BORDER_OFFSET;
-      if (newLeft <= (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE) {
+      if (
+        newLeft <
+        (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE + ROBOT_INITIAL_X_POS
+      ) {
         robot.style.left = newLeft + 'px';
       }
       break;
     }
     case 180: {
       newTop = currY + CELL_WIDTH + BORDER_OFFSET;
-      if (newTop <= (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE) {
+      if (
+        newTop <
+        (CELL_WIDTH + BORDER_OFFSET) * GRID_SIZE + ROBOT_INITIAL_Y_POS
+      ) {
         robot.style.top = newTop + 'px';
       }
       break;
